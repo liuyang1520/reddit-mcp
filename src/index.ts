@@ -74,6 +74,7 @@ const SearchPostsSchema = z.object({
   query: z.string().min(1, "Search query is required"),
   subreddit: z.string().optional(),
   sort: z.enum(['relevance', 'hot', 'top', 'new', 'comments']).default('relevance'),
+  time: z.enum(['hour', 'day', 'week', 'month', 'year', 'all']).optional(),
   limit: z.number().min(1).max(100).default(25),
 });
 
@@ -248,6 +249,11 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               description: 'Sort order for search results',
               default: 'relevance',
             },
+            time: {
+              type: 'string',
+              enum: ['hour', 'day', 'week', 'month', 'year', 'all'],
+              description: 'Time period to filter results (works best with sort=top)',
+            },
             limit: {
               type: 'number',
               description: 'Number of results to retrieve (1-100)',
@@ -380,7 +386,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case 'search_posts': {
         const args = SearchPostsSchema.parse(request.params.arguments);
-        const posts = await redditClient.searchPosts(args.query, args.subreddit, args.sort, args.limit);
+        const posts = await redditClient.searchPosts(args.query, args.subreddit, args.sort, args.time, args.limit);
         return {
           content: [
             {

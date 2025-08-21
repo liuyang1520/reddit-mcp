@@ -43,6 +43,15 @@ Required environment variables are loaded via dotenv and validated through Confi
 
 The client implements Reddit's OAuth2 flow with automatic token management. All API calls go through `makeRequest()` which handles authentication, rate limiting, and error responses. The client maps Reddit's JSON responses to typed interfaces (RedditPost, RedditComment, etc.) and handles nested comment threading recursively.
 
+### Search Functionality
+
+The `search_posts` tool supports time-based filtering for more precise results:
+- **Time periods**: `hour`, `day`, `week`, `month`, `year`, `all`
+- **Best practice**: Use `sort: "top"` with time filtering for optimal results
+- **Example**: Search for posts from the last 24 hours using `time: "day"`
+
+Time filtering leverages Reddit's `t` parameter in the search API to constrain results to specific time windows, enabling discovery of recent content without client-side filtering.
+
 ## MCP Protocol Compliance  
 
 The server implements the standard MCP protocol with:

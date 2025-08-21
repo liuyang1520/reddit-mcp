@@ -167,14 +167,15 @@ export class RedditClient {
     return data.data.children.map((child: any) => this.mapComment(child.data));
   }
 
-  async searchPosts(query: string, subreddit?: string, sort: 'relevance' | 'hot' | 'top' | 'new' | 'comments' = 'relevance', limit: number = 25): Promise<RedditPost[]> {
+  async searchPosts(query: string, subreddit?: string, sort: 'relevance' | 'hot' | 'top' | 'new' | 'comments' = 'relevance', time?: 'hour' | 'day' | 'week' | 'month' | 'year' | 'all', limit: number = 25): Promise<RedditPost[]> {
     const searchPath = subreddit ? `/r/${subreddit}/search` : '/search';
     const params = new URLSearchParams({
       q: query,
       sort,
       limit: limit.toString(),
       type: 'link',
-      ...(subreddit && { restrict_sr: 'true' })
+      ...(subreddit && { restrict_sr: 'true' }),
+      ...(time && { t: time })
     });
     
     const data = await this.makeRequest(`${searchPath}?${params}`);
